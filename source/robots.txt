@@ -1,0 +1,12 @@
+# hexo robots.txt
+User-agent: *
+
+Disallow: /vendors/
+Disallow: /js/
+Disallow: /css/
+Disallow: /fonts/
+Disallow: /vendors/
+Disallow: /fancybox/
+
+Sitemap: http://luocong.net/sitemap.xml
+Sitemap: http://luocong.net/baidusitemap.xml

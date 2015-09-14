@@ -5,7 +5,7 @@
 # Site
 title: MrLuo's Blog
 subtitle:
-description: 技术博客
+description: 这里是属于罗聪的个人技术博客，在这里，有关于web前端，后端的许多技术文章，有探寻到的一些有意思的，好玩的东西，或者还有个人成长经历哦！由衷希望结识一些志同道合的同学，来共同进步，技术改变未来！
 author: Luo
 language: zh-Hans
 timezone: Asia/Shanghai
@@ -14,7 +14,8 @@ timezone: Asia/Shanghai
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
 url: http://luocong.net
 root: /
-permalink: :year/:month/:day/:title/
+#permalink: :year/:month/:day/:title/
+permalink: :title/
 permalink_defaults:
 
 # Directory
@@ -68,6 +69,13 @@ theme: next
 plugins:
 - hexo-generator-feed
 - hexo-generator-sitemap
+- hexo-generator-baidu-sitemap
+
+# hexo sitemap网站地图
+sitemap:
+path: sitemap.xml
+baidusitemap:
+path: baidusitemap.xml
 
 # Deployment
 ## Docs: http://hexo.io/docs/deployment.html
