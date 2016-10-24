@@ -1,0 +1,504 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title><![CDATA[MrLuo's Blog]]></title>
+  
+  <link href="/atom.xml" rel="self"/>
+  <link href="http://luocong.net/"/>
+  <updated>2015-12-16T02:55:18.000Z</updated>
+  <id>http://luocong.net/</id>
+  
+  <author>
+    <name><![CDATA[Luo]]></name>
+    
+  </author>
+  
+  <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title><![CDATA[webapp retina下1px边框实现]]></title>
+    <link href="http://luocong.net/blog/webapp/retina-1px/"/>
+    <id>http://luocong.net/blog/webapp/retina-1px/</id>
+    <published>2015-12-16T02:55:18.000Z</published>
+    <updated>2015-12-16T02:55:18.000Z</updated>
+    <content type="html"><![CDATA[<h5 id="基础知识">基础知识</h5><h6 id="设备像素（物理像素）">设备像素（物理像素）</h6><p>显示器最小的物理显示单元。每个像素有自己的颜色、亮度。</p>
+<h6 id="屏幕密度（PPI）">屏幕密度（PPI）</h6><p>每英寸有多少像素（PPI）。当一个显示屏像素密度超过300ppi时，人眼就无法区分出单独的像素。PPI高于210（笔记本电脑）、260（平板电脑）、300（手机）的屏幕都称为Retina屏幕。</p>
+<h6 id="CSS像素（设备独立像素，dips）">CSS像素（设备独立像素，dips）</h6><p>CSS像素主要使用在浏览器上，就是写CSS时使用的像素px，CSS像素在所有屏幕上是一样的，与设备无关。</p>
+<h6 id="设备像素比_window-devicePixelRatio(dpr)">设备像素比 window.devicePixelRatio(dpr)</h6><p>window.devicePixelRatio = 物理像素/设备独立像素（dips）<br>非视网膜的dpr=1，CSS 1px 对应一个物理像素，如：非视网膜屏幕的手机，dpr=320/320=1<br>视网膜的dpr=2，CSS 1px 对应四个物理像素，如：视网膜屏幕的手机，dpr=640/320=2。1个CSS像素对应2*2=4个物理像素  </p>
+<a id="more"></a>
+<p>retina下，物理像素要1px，那CSS像素就得是0.5px，不然看上去会粗。</p>
+<h5 id="解决方案">解决方案</h5><h6 id="设border-width为小数">设border-width为小数</h6><p>现在IOS8和IOS8以上版本，已经支持小数边框了，那么意味着，我们可以使用如下的css代码</p>
+<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="class">.hairlines</span> * <span class="rules">&#123; <span class="rule"><span class="attribute">border-width</span>:<span class="value"> .<span class="number">5px</span> <span class="important">!important</span></span></span>; &#125;</span></span><br></pre></td></tr></table></figure>
+<p>但这样子IOS8以下的版本，以及android浏览器都不支持，会把边框border-width:0,就没有边框啦。所以如果使用这个方案最好做一下优雅降级，即对不支持的版本还使用原来的边框。<br>js判断UA</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> (<span class="regexp">/iP(hone|od|ad)/</span>.test(navigator.userAgent)) &#123;</span><br><span class="line">  <span class="keyword">var</span> v = (navigator.appVersion).match(<span class="regexp">/OS (\d+)_(\d+)_?(\d+)?/</span>),</span><br><span class="line">    version = <span class="built_in">parseInt</span>(v[<span class="number">1</span>], <span class="number">10</span>);</span><br><span class="line">  <span class="keyword">if</span>(version &gt;= <span class="number">8</span>)&#123;</span><br><span class="line">    <span class="built_in">document</span>.documentElement.classList.add(<span class="string">'hairlines'</span>)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>或者js判断是否支持0.5px边框，是的话，则输出类名hairlines</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> (<span class="built_in">window</span>.devicePixelRatio &amp;&amp; devicePixelRatio &gt;= <span class="number">2</span>) &#123;</span><br><span class="line">  <span class="keyword">var</span> testElem = <span class="built_in">document</span>.createElement(<span class="string">'div'</span>);</span><br><span class="line">  testElem.style.border = <span class="string">'.5px solid transparent'</span>;</span><br><span class="line">  <span class="built_in">document</span>.body.appendChild(testElem);</span><br><span class="line">  <span class="keyword">if</span> (testElem.offsetHeight == <span class="number">1</span>)&#123;</span><br><span class="line">    <span class="built_in">document</span>.querySelector(<span class="string">'html'</span>).classList.add(<span class="string">'hairlines'</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="built_in">document</span>.body.removeChild(testElem);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h6 id="scale">scale</h6><p>可以用1px尺寸的带背景色元素然后scaleX(0.5)或scaleY(0.5)实现0.5px效果。</p>
+<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="comment">/*下边框1px*/</span></span><br><span class="line"><span class="class">.hairlines</span><span class="rules">&#123;    </span><br><span class="line">    <span class="rule"><span class="attribute">position</span>:<span class="value"> relative</span></span>; </span><br><span class="line">&#125;</span> </span><br><span class="line"><span class="class">.hairlines</span><span class="pseudo">:after</span><span class="rules">&#123;    </span><br><span class="line">    <span class="rule"><span class="attribute">content</span>:<span class="value"> <span class="string">''</span></span></span>;    </span><br><span class="line">    <span class="rule"><span class="attribute">position</span>:<span class="value"> absolute</span></span>;    </span><br><span class="line">    <span class="rule"><span class="attribute">bottom</span>:<span class="value"><span class="number">0</span></span></span>;    </span><br><span class="line">    <span class="rule"><span class="attribute">left</span>:<span class="value"><span class="number">0</span></span></span>;    </span><br><span class="line">    <span class="rule"><span class="attribute">right</span>:<span class="value"><span class="number">0</span></span></span>;    </span><br><span class="line">    <span class="rule"><span class="attribute">border-bottom</span>:<span class="value"><span class="number">1px</span> solid <span class="hexcolor">#dadada</span></span></span>;    </span><br><span class="line">    <span class="rule"><span class="attribute">-webkit-transform</span>:<span class="value"><span class="function">scaleY</span>(.<span class="number">5</span>)</span></span>; </span><br><span class="line">    <span class="rule"><span class="attribute">transform</span>:<span class="value"><span class="function">scaleY</span>(.<span class="number">5</span>)</span></span>;   </span><br><span class="line">    <span class="rule"><span class="attribute">-webkit-transform-origin</span>:<span class="value"><span class="number">0</span> <span class="number">0</span></span></span>;</span><br><span class="line">    <span class="rule"><span class="attribute">transform-origin</span>:<span class="value"><span class="number">0</span> <span class="number">0</span></span></span>;  </span><br><span class="line">&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/*四边框实现*/</span></span><br><span class="line"><span class="class">.hairlines</span><span class="rules">&#123;    </span><br><span class="line">    <span class="rule"><span class="attribute">position</span>:<span class="value"> relative</span></span>; </span><br><span class="line">    <span class="rule"><span class="attribute">border-radius</span>:<span class="value"> <span class="number">8px</span></span></span>;</span><br><span class="line">    <span class="rule"><span class="attribute">border</span>:<span class="value"> none</span></span>;</span><br><span class="line">&#125;</span> </span><br><span class="line"><span class="class">.hairlines</span><span class="pseudo">:after</span><span class="rules">&#123;</span><br><span class="line">    <span class="rule"><span class="attribute">content</span>:<span class="value"> <span class="string">''</span></span></span>;</span><br><span class="line">    <span class="rule"><span class="attribute">position</span>:<span class="value"> absolute</span></span>;</span><br><span class="line">    <span class="rule"><span class="attribute">top</span>:<span class="value"> <span class="number">0</span></span></span>;</span><br><span class="line">    <span class="rule"><span class="attribute">left</span>:<span class="value"> <span class="number">0</span></span></span>;    </span><br><span class="line">    <span class="rule"><span class="attribute">width</span>:<span class="value"> <span class="number">200%</span></span></span>;</span><br><span class="line">    <span class="rule"><span class="attribute">height</span>:<span class="value"> <span class="number">200%</span></span></span>;</span><br><span class="line">    <span class="rule"><span class="attribute">border</span>:<span class="value"> <span class="number">1px</span> solid <span class="hexcolor">#dadada</span></span></span>;</span><br><span class="line">    <span class="rule"><span class="attribute">border-radius</span>:<span class="value"> <span class="number">8px</span></span></span>;</span><br><span class="line">    <span class="rule"><span class="attribute">-webkit-box-sizing</span>:<span class="value"> border-box</span></span>;</span><br><span class="line">    <span class="rule"><span class="attribute">box-sizing</span>:<span class="value"> border-box</span></span>;   </span><br><span class="line">    <span class="rule"><span class="attribute">-webkit-transform</span>:<span class="value"> <span class="function">scale</span>(.<span class="number">5</span>)</span></span>;</span><br><span class="line">    <span class="rule"><span class="attribute">transform</span>:<span class="value"> <span class="function">scale</span>(.<span class="number">5</span>)</span></span>;</span><br><span class="line">    <span class="rule"><span class="attribute">-webkit-transform-origin</span>:<span class="value"> left top</span></span>;</span><br><span class="line">    <span class="rule"><span class="attribute">transform-origin</span>:<span class="value"> left top</span></span>;</span><br><span class="line">&#125;</span></span><br></pre></td></tr></table></figure>
+<p>这种方案目前来说是一个不错的解决方案,操作方便，而且对圆角有一定的支持，兼容性也算可以。<br>如果加一个判断是否Retina屏，来确定是否使用这种方式创建边框那当然是最好啦</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(<span class="built_in">window</span>.devicePixelRatio &amp;&amp; devicePixelRatio &gt;= <span class="number">2</span>)&#123;</span><br><span class="line">  <span class="built_in">document</span>.querySelector(<span class="string">'html'</span>).classList.add(<span class="string">'hairlines'</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+    <summary type="html">
+    <![CDATA[<h5 id="基础知识">基础知识</h5><h6 id="设备像素（物理像素）">设备像素（物理像素）</h6><p>显示器最小的物理显示单元。每个像素有自己的颜色、亮度。</p>
+<h6 id="屏幕密度（PPI）">屏幕密度（PPI）</h6><p>每英寸有多少像素（PPI）。当一个显示屏像素密度超过300ppi时，人眼就无法区分出单独的像素。PPI高于210（笔记本电脑）、260（平板电脑）、300（手机）的屏幕都称为Retina屏幕。</p>
+<h6 id="CSS像素（设备独立像素，dips）">CSS像素（设备独立像素，dips）</h6><p>CSS像素主要使用在浏览器上，就是写CSS时使用的像素px，CSS像素在所有屏幕上是一样的，与设备无关。</p>
+<h6 id="设备像素比_window-devicePixelRatio(dpr)">设备像素比 window.devicePixelRatio(dpr)</h6><p>window.devicePixelRatio = 物理像素/设备独立像素（dips）<br>非视网膜的dpr=1，CSS 1px 对应一个物理像素，如：非视网膜屏幕的手机，dpr=320/320=1<br>视网膜的dpr=2，CSS 1px 对应四个物理像素，如：视网膜屏幕的手机，dpr=640/320=2。1个CSS像素对应2*2=4个物理像素  </p>]]>
+    
+    </summary>
+    
+      <category term="1px边框" scheme="http://luocong.net/tags/1px%E8%BE%B9%E6%A1%86/"/>
+    
+      <category term="retina" scheme="http://luocong.net/tags/retina/"/>
+    
+      <category term="webapp" scheme="http://luocong.net/tags/webapp/"/>
+    
+      <category term="blog" scheme="http://luocong.net/categories/blog/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[微信浏览器hack记录]]></title>
+    <link href="http://luocong.net/blog/hack/weixin-browser-hack/"/>
+    <id>http://luocong.net/blog/hack/weixin-browser-hack/</id>
+    <published>2015-12-01T06:26:17.000Z</published>
+    <updated>2015-12-01T06:26:17.000Z</updated>
+    <content type="html"><![CDATA[<h5 id="微信浏览器文本框不能输入内容">微信浏览器文本框不能输入内容</h5><h6 id="原因">原因</h6><p>在h5开发中，为了禁掉用户可以选中页面中的内容，你可能使用了一下css属性值：</p>
+<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="tag">-webkit-user-select</span>: <span class="tag">none</span>;</span><br><span class="line"><span class="tag">user-select</span>: <span class="tag">none</span>;</span><br></pre></td></tr></table></figure>
+<p>这个属性将导致微信内置浏览器文本框不能输入内容，注意并不仅仅在微信浏览器有这个问题，ios自带游览器，百度浏览器似乎也有这个问题，uc浏览器表现正常</p>
+<h6 id="解决办法">解决办法</h6><ol>
+<li>尽量不要再全局使用属性，只给需要的元素添加这个属性</li>
+<li>如果必须在全局使用属性，那可以给不需要的元素，看情况添加以下值：</li>
+</ol>
+<blockquote>
+<p>auto—默认值，用户可以选中元素中的内容<br>text—用户可以选择元素中的文本<br>all—在编辑器内，如果双击/上下文点击发生在子元素上，改值的最高级祖先元素将被选中。</p>
+</blockquote>
+<p>如：</p>
+<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="tag">-webkit-user-select</span>: <span class="tag">auto</span>;</span><br><span class="line"><span class="tag">user-select</span>: <span class="tag">auto</span>;</span><br></pre></td></tr></table></figure>
+]]></content>
+    <summary type="html">
+    <![CDATA[<h5 id="微信浏览器文本框不能输入内容">微信浏览器文本框不能输入内容</h5><h6 id="原因">原因</h6><p>在h5开发中，为了禁掉用户可以选中页面中的内容，你可能使用了一下css属性值：</p>
+<figure class="highlight css"><]]>
+    </summary>
+    
+      <category term="browserhack" scheme="http://luocong.net/tags/browserhack/"/>
+    
+      <category term="h5" scheme="http://luocong.net/tags/h5/"/>
+    
+      <category term="hack" scheme="http://luocong.net/tags/hack/"/>
+    
+      <category term="weChat" scheme="http://luocong.net/tags/weChat/"/>
+    
+      <category term="weixinbrowserhack" scheme="http://luocong.net/tags/weixinbrowserhack/"/>
+    
+      <category term="blog" scheme="http://luocong.net/categories/blog/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[高性能网站建设规则]]></title>
+    <link href="http://luocong.net/blog/website/high-performance-site-rule/"/>
+    <id>http://luocong.net/blog/website/high-performance-site-rule/</id>
+    <published>2015-10-19T09:08:18.000Z</published>
+    <updated>2015-10-19T09:08:18.000Z</updated>
+    <content type="html"><![CDATA[<blockquote>
+<p>设计和构造计算机程序要经过成千上万次抉择，每一次都代表着一种权衡。在进行重大抉择时，每个选择都有其显著的优缺点，让人难以取舍。我们都期望收益最大化，损耗最小化。或许，人生的终极权衡是：我想去天堂，但我不想死。然而现实的情况往往是：时间，质量和成本，三选二。这个项目三角形说明：即使在最理想的情况下，多快好省的事也基本不存在，所以权衡无处不在。——《高性能网站建设进阶指南》</p>
+</blockquote>
+<h5 id="代码">代码</h5><h6 id="将样式表放在顶部，尽量使用外联的CSS">将样式表放在顶部，尽量使用外联的CSS</h6><h6 id="将脚本放在底部，尽量使用外联的JavaScript">将脚本放在底部，尽量使用外联的JavaScript</h6><h6 id="精简优化JavaScript">精简优化JavaScript</h6><p>如果JavaScript代码执行时间超过0.1秒，页面将会给人不够平滑快捷的感觉；如果执行时间超过1秒，则会感到应用程序缓慢；超过10秒，那么用户将会非常沮丧。</p>
+<h6 id="优化CSS选择器，避免CSS表达式">优化CSS选择器，避免CSS表达式</h6><p>如下面的样式代码：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">background-color: expression(...);</span><br></pre></td></tr></table></figure>
+<h5 id="资源">资源</h5><h6 id="图像优化">图像优化</h6><p>用JPG保存照片，用GIF保存动画，其他所有图像都用PNG来保存，并尽量使用PNG8，对于大小超过10KB的图像，采用渐进JPEG编码。</p>
+<a id="more"></a>
+<h6 id="压缩资源">压缩资源</h6><ol>
+<li>压缩资源</li>
+<li>gzip(服务端配置)</li>
+</ol>
+<h5 id="网络">网络</h5><h6 id="减少HTTP请求">减少HTTP请求</h6><ol>
+<li>CSS Sprites(雪碧图)</li>
+<li>内联图片(data:URL)</li>
+<li>合并脚本和样式表</li>
+</ol>
+<h6 id="使用内容发布网络(CDN)">使用内容发布网络(CDN)</h6><h6 id="减少DNS查找">减少DNS查找</h6><h6 id="避免重定向">避免重定向</h6><h5 id="缓存">缓存</h5><h6 id="添加Expires头(设置缓存)">添加Expires头(设置缓存)</h6><h6 id="配置ETag">配置ETag</h6><h6 id="使Ajax可缓存">使Ajax可缓存</h6>]]></content>
+    <summary type="html">
+    <![CDATA[<blockquote>
+<p>设计和构造计算机程序要经过成千上万次抉择，每一次都代表着一种权衡。在进行重大抉择时，每个选择都有其显著的优缺点，让人难以取舍。我们都期望收益最大化，损耗最小化。或许，人生的终极权衡是：我想去天堂，但我不想死。然而现实的情况往往是：时间，质量和成本，三选二。这个项目三角形说明：即使在最理想的情况下，多快好省的事也基本不存在，所以权衡无处不在。——《高性能网站建设进阶指南》</p>
+</blockquote>
+<h5 id="代码">代码</h5><h6 id="将样式表放在顶部，尽量使用外联的CSS">将样式表放在顶部，尽量使用外联的CSS</h6><h6 id="将脚本放在底部，尽量使用外联的JavaScript">将脚本放在底部，尽量使用外联的JavaScript</h6><h6 id="精简优化JavaScript">精简优化JavaScript</h6><p>如果JavaScript代码执行时间超过0.1秒，页面将会给人不够平滑快捷的感觉；如果执行时间超过1秒，则会感到应用程序缓慢；超过10秒，那么用户将会非常沮丧。</p>
+<h6 id="优化CSS选择器，避免CSS表达式">优化CSS选择器，避免CSS表达式</h6><p>如下面的样式代码：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">background-color: expression(...);</span><br></pre></td></tr></table></figure>
+<h5 id="资源">资源</h5><h6 id="图像优化">图像优化</h6><p>用JPG保存照片，用GIF保存动画，其他所有图像都用PNG来保存，并尽量使用PNG8，对于大小超过10KB的图像，采用渐进JPEG编码。</p>]]>
+    
+    </summary>
+    
+      <category term="guide" scheme="http://luocong.net/tags/guide/"/>
+    
+      <category term="performance" scheme="http://luocong.net/tags/performance/"/>
+    
+      <category term="web" scheme="http://luocong.net/tags/web/"/>
+    
+      <category term="blog" scheme="http://luocong.net/categories/blog/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[UC浏览器hack记录]]></title>
+    <link href="http://luocong.net/blog/hack/uc-browser-hack/"/>
+    <id>http://luocong.net/blog/hack/uc-browser-hack/</id>
+    <published>2015-10-16T03:06:34.000Z</published>
+    <updated>2015-10-16T03:06:34.000Z</updated>
+    <content type="html"><![CDATA[<h5 id="uc浏览器网页字体被放大">uc浏览器网页字体被放大</h5><h6 id="原因">原因</h6><p>uc浏览器会对wap页面字体按规则放大</p>
+<h6 id="解决办法">解决办法</h6><p>若不想页面字体被放大，可以通过增加html5标签header、nav、section中的任一个来避免,如在body中添加header空标签：</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="title">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="title">header</span>&gt;</span><span class="tag">&lt;/<span class="title">header</span>&gt;</span></span><br><span class="line">...</span><br><span class="line"><span class="tag">&lt;/<span class="title">body</span>&gt;</span></span><br></pre></td></tr></table></figure>]]></content>
+    <summary type="html">
+    <![CDATA[<h5 id="uc浏览器网页字体被放大">uc浏览器网页字体被放大</h5><h6 id="原因">原因</h6><p>uc浏览器会对wap页面字体按规则放大</p>
+<h6 id="解决办法">解决办法</h6><p>若不想页面字体被放大，可以通过增加html5标签heade]]>
+    </summary>
+    
+      <category term="UC" scheme="http://luocong.net/tags/UC/"/>
+    
+      <category term="UCbrowserhack" scheme="http://luocong.net/tags/UCbrowserhack/"/>
+    
+      <category term="hack" scheme="http://luocong.net/tags/hack/"/>
+    
+      <category term="blog" scheme="http://luocong.net/categories/blog/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[微信公众平台开发入门之工具篇]]></title>
+    <link href="http://luocong.net/blog/weixin/weixin-dev-tools/"/>
+    <id>http://luocong.net/blog/weixin/weixin-dev-tools/</id>
+    <published>2015-09-23T10:26:32.000Z</published>
+    <updated>2016-10-21T10:01:12.000Z</updated>
+    <content type="html"><![CDATA[<h5 id="前言">前言</h5><blockquote>
+<p>工欲善其事，必先利其器</p>
+</blockquote>
+<h5 id="Ngrok">Ngrok</h5><p>微信需要外网地址，那意味着我们只能把代码传到外网服务器来查看开发调试？这样做是不是太low，而且效率及其低下，这是肯定不能接受的，下面我就介绍一个内网穿透神器ngrok，它能给我们生成一个外网地址并映射到本地服务器：  </p>
+<ol>
+<li>首先你要到<a href="https://ngrok.com" target="_blank" rel="external">ngrok官网</a>注册一个账户  </li>
+<li>然后<a href="https://ngrok.com/download" target="_blank" rel="external">下载与系统相应的ngrok版本</a></li>
+<li>解压后，通过命令行进入到你解压的位置</li>
+<li>执行命令：</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">./ngrok authtoken &lt;your-authtoken&gt;</span><br></pre></td></tr></table></figure>
+<p>your-authtoken你注册后就能看到。到此ngrok就安装完成了。<br>分配外网地址：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">./ngrok http &lt;your-port&gt;</span><br></pre></td></tr></table></figure>
+<p>your-port是本地服务器端口号，可自行设置。<br>但上面的命令每次分配的外网地址是变化的，如果需要固定的外网地址，那你分配外网地址的时候要这样（付费用户才能用）：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">./ngrok http -subdomain=&lt;your-app&gt; &lt;your-port&gt;</span><br></pre></td></tr></table></figure>
+<p>例如：./ngrok -subdomain=baz 8080，那给你分配的外网地址就是baz.ngrok.io<br><a id="more"></a><br><strong>注意：ngrok 1.x与2.x命令稍有不同，请注意用ngrok －help查看</strong></p>
+<h6 id="ngrok使用中的问题">ngrok使用中的问题</h6><blockquote>
+<p>访问缓慢以及不可访问</p>
+</blockquote>
+<p>由于服务器是在美国，这个稳定性实在不能保证，经常外网发布成功却不能访问或访问很慢，原因大家都懂的。 </p>
+<blockquote>
+<p>域名不固定</p>
+</blockquote>
+<p>这个你当然可以靠付费解决，ngrok并不是很贵，但结合第一条稳定性的问题，这就日了狗了。<br>ngrok确实是神器，不用的话对我们开发起来确实不方便，那有解决办法么？这个是肯定的。</p>
+<h5 id="Tunnel">Tunnel</h5><p><strong>关于Tunnel的最新消息：</strong><br>Tunnel不能用了，据说是<a href="http://v2ex.com/t/148279?p=2" target="_blank" rel="external">作者暂时不打算再为服务器空间续费了</a>，没钱，大家可以给你众筹嘛！不要停好不好，泪流满面有没有。因此关于Tunnel的部分可以跳过了。</p>
+<p>就是这个<a href="http://www.tunnel.mobi/" target="_blank" rel="external">tunnel</a>:</p>
+<blockquote>
+<p>tunnel是一个基于ngrok的网络服务，通过tunnel，他人在公网可以通过类似example.tunnel.mobi这样的二级域名来访问你的本地网络服务。<br>tunnel部署在国内，支持ngrok的绝大多数功能，同时改变了由于ngrok服务器在美国所造成的访问缓慢和不可用的现状。</p>
+</blockquote>
+<p>服务器在国内，域名能固定，简直完美解决了ngrok的使用问题。</p>
+<h6 id="如何使用tunnel">如何使用tunnel</h6><ol>
+<li>下载客户端：<a href="https://ngrokd.b0.upaiyun.com/clients/ngrok_for_linux.zip" target="_blank" rel="external">Linux版本</a>，<a href="https://ngrokd.b0.upaiyun.com/clients/ngrok_for_macosx.zip" target="_blank" rel="external">Mac OSX版本</a>，<a href="https://ngrokd.b0.upaiyun.com/clients/ngrok_for_win.zip" target="_blank" rel="external">32Bit Win版本</a>，<a href="https://ngrokd.b0.upaiyun.com/clients/ngrok_for_win_64bit.zip" target="_blank" rel="external">64Bit Win版本</a></li>
+<li>下载配置文件<a href="https://ngrokd.b0.upaiyun.com/ngrok.cfg" target="_blank" rel="external">ngrok.cfg</a></li>
+<li>运行客户端时，请添加-config以载入配置文件。</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">./ngrok -config ngrok.cfg -subdomain &lt;your-appname&gt; &lt;your-port&gt;</span><br></pre></td></tr></table></figure>
+<p>例如 ngrok -config ngrok.cfg -subdomain example 8080 ;意为将本地服务器的8080端口映射到example.tunnel.mobi上<br><strong>注意：使用tunnel，需要下载的是ngrok 1.x 版本，不能是2.x版本，ngrok官方目前并不准备开放2.0客户端的第三方服务器支持</strong>  </p>
+<h5 id="Localtunnel">Localtunnel</h5><p><a href="http://localtunnel.me" target="_blank" rel="external">Localtunnel</a>是一个类似于ngrok的内网映射工具，但Localtunnel是基于nodejs的，而ngrok是基于go语言；相信做过一段时间前端的对nodejs都有了解的，所以安装nodejs部分略过不讲啦，当然npm也是必备的。至于为什么有了ngrok，tunnel还要用Localtunnel，实在是Tunnel虽然在国内，访问速度也可以，但经常不能访问，估计是服务器也不堪负荷，挂了，但这很耽误事好不好，好不好，好不好！只好用Localtunnel备用啦！虽然Localtunnel也不太稳定，但好待能用。好了，废话不多说。<br>首先全局安装Localtunnel  </p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">npm install -g localtunnel</span><br></pre></td></tr></table></figure>
+<p>然后设置项目名和本地服务器端口</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">lt <span class="operator">-s</span> &lt;your-appname&gt; -p &lt;your-port&gt;</span><br></pre></td></tr></table></figure>
+<p>例如：lt -s example -p 8080;意为将本地服务器的8080端口映射到example.localtunnel.me上<br><strong>只是微信正式的公众号js接口安全域名竟然不支持未通过ICP备案的域名，真是日了狗了，日了狗了，狗了…，所以只能在<a href="http://mp.weixin.qq.com/debug/cgi-bin/sandbox?t=sandbox/login" target="_blank" rel="external">微信公众平台测试帐号</a>里使用，好在测试帐号支持的接口还是比较多的</strong></p>
+<h5 id="QQ浏览器微信调试工具">QQ浏览器微信调试工具</h5><p>Tunnel挂了，localtunnel，ngrok不稳定，找一个方便的微信调试工具就迫在眉睫了，无意发现了<a href="http://blog.qqbrowser.cc/wei-xin-gong-zhong-hao-ben-di-diao-shi/" target="_blank" rel="external">QQ浏览器微信调试工具</a>，其实也是内置了使用ngrok，只是把它封装成了一个插件，粗略试了一下，还是不错的，具体教程我就不搬过来了，这里面写的很详细，只是必须下载QQ浏览器，如果不想下载QQ浏览器，可以使用网络大神从qq浏览器中提取的版本，<a href="https://www.v2ex.com/t/233380" target="_blank" rel="external">地址在这里</a>,有win版和mac版，使用方式和ngrok命令一样。</p>
+<h5 id="Sunng-ngrok">Sunng-ngrok</h5><p>QQ的微信调试工具最近也不能用了，不知道是不是停了，还是临时性的，导致工作好几天没法开展，没办法只能再找。<br><a href="http://www.ngrok.cc/" target="_blank" rel="external">Sunng-ngrok</a>是一个个人维护的类似于tunnel的工具，作者是<a href="http://www.sunnyos.com/" target="_blank" rel="external">sunny</a>,作者强调不收费，大家可以凭个人意愿打赏。使用方法大家看作者的教程吧，我就不列了。<br>也不知道这个能坚持多久，找了这么多，觉得如果有条件的话还是自己搭一套ngrok算了，真心太折腾了</p>
+<h5 id="微信开发者工具">微信开发者工具</h5><p><a href="http://mp.weixin.qq.com/wiki/10/e5f772f4521da17fa0d7304f68b97d7e.html" target="_blank" rel="external">微信开发者工具</a>是微信为帮助开发者更方便、更安全地开发和调试基于微信的网页的开发者工具。它是一个桌面应用，通过模拟微信客户端的表现，使得开发者可以使用这个工具方便地在 PC 或者 Mac 上进行开发和调试工作，注意这是微信官方发布的哦，应该能够得到很好的维护。</p>
+]]></content>
+    <summary type="html">
+    <![CDATA[<h5 id="前言">前言</h5><blockquote>
+<p>工欲善其事，必先利其器</p>
+</blockquote>
+<h5 id="Ngrok">Ngrok</h5><p>微信需要外网地址，那意味着我们只能把代码传到外网服务器来查看开发调试？这样做是不是太low，而且效率及其低下，这是肯定不能接受的，下面我就介绍一个内网穿透神器ngrok，它能给我们生成一个外网地址并映射到本地服务器：  </p>
+<ol>
+<li>首先你要到<a href="https://ngrok.com">ngrok官网</a>注册一个账户  </li>
+<li>然后<a href="https://ngrok.com/download">下载与系统相应的ngrok版本</a></li>
+<li>解压后，通过命令行进入到你解压的位置</li>
+<li>执行命令：</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">./ngrok authtoken &lt;your-authtoken&gt;</span><br></pre></td></tr></table></figure>
+<p>your-authtoken你注册后就能看到。到此ngrok就安装完成了。<br>分配外网地址：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">./ngrok http &lt;your-port&gt;</span><br></pre></td></tr></table></figure>
+<p>your-port是本地服务器端口号，可自行设置。<br>但上面的命令每次分配的外网地址是变化的，如果需要固定的外网地址，那你分配外网地址的时候要这样（付费用户才能用）：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">./ngrok http -subdomain=&lt;your-app&gt; &lt;your-port&gt;</span><br></pre></td></tr></table></figure>
+<p>例如：./ngrok -subdomain=baz 8080，那给你分配的外网地址就是baz.ngrok.io<br>]]>
+    
+    </summary>
+    
+      <category term="工具" scheme="http://luocong.net/tags/%E5%B7%A5%E5%85%B7/"/>
+    
+      <category term="微信" scheme="http://luocong.net/tags/%E5%BE%AE%E4%BF%A1/"/>
+    
+      <category term="教程" scheme="http://luocong.net/tags/%E6%95%99%E7%A8%8B/"/>
+    
+      <category term="blog" scheme="http://luocong.net/categories/blog/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[微信公众平台开发入门之基础篇]]></title>
+    <link href="http://luocong.net/blog/weixin/weixin-dev-base/"/>
+    <id>http://luocong.net/blog/weixin/weixin-dev-base/</id>
+    <published>2015-09-22T10:26:32.000Z</published>
+    <updated>2016-10-21T10:01:12.000Z</updated>
+    <content type="html"><![CDATA[<h5 id="前言">前言</h5><blockquote>
+<p>话说微信公众平台的开发文档，看着完全找不着北好吧，完全不适合新手学习嘛，最起码弄个简单入门嘛！ —— 白岩松</p>
+</blockquote>
+<p>其实我也是个新手，写这篇也是边学边写，尽量为大家趟出一条快速入门的小道吧。当然，本篇不是教你怎样在微信公众号后台配置自动回复等简单功能的，而是完成更复杂的接口调用。</p>
+<h5 id="准备">准备</h5><p>为什么要用微信公众平台？现在谁都能看出来移动互联网是大趋势，而开发app的成本很高，而用微信公共号营销，不仅成本小，而且迭代快，当然就成了拽住移动互联网尾巴的第二选择。</p>
+<p>废话不多说了，微信公众号共分为三种</p>
+<blockquote>
+<p>订阅号</p>
+</blockquote>
+<p>订阅号被放在二级目录，要先点订阅号入口，才能看到订阅号列表，订阅号每天可以群发一条消息，一个月可以群发30条，总体来说订阅号偏向于媒体运营和信息传播。</p>
+<blockquote>
+<p>服务号</p>
+</blockquote>
+<p>服务号会像跟其他人的聊天信息一样放在会话列表中，服务号因为更偏重服务，所以对开发者支持也比较多，例如微信支付等订阅号不能支持的功能，但服务号不能天天发消息，一个月只能发4条，服务号侧重于对用户进行服务。</p>
+<blockquote>
+<p>企业号</p>
+</blockquote>
+<p>企业号顾名思义则是供企业内部使用，侧重于生产运营管理<br><a id="more"></a><br>具体怎么选择看需求，可以参考：<br><a href="http://kf.qq.com/faq/120911VrYVrA130805byM32u.html" target="_blank" rel="external">微信公众平台服务号、订阅号的相关说明</a><br><a href="http://kf.qq.com/faq/140806zARbmm140826M36RJF.html" target="_blank" rel="external">企业号与服务号、订阅号的区别</a></p>
+<h5 id="申请测试账号">申请测试账号</h5><p>可能你开发时暂时没有公众号，或者公众号正在运营，不可能让你叮叮当当的实验，没关系，我们可以申请测试账号：<br><a href="http://mp.weixin.qq.com/debug/cgi-bin/sandbox?t=sandbox/login" target="_blank" rel="external">微信公众平台接口体验测试号申请</a></p>
+<h5 id="接口配置">接口配置</h5><p><img src="http://7xlm9s.com1.z0.glb.clouddn.com/weixin/weixin-dev-primary-1-01.png" alt="图1"><br>以测试账号为例，appID,appsecret由系统自动生成，我们可以先不用管，我们需要填的是URL,Token两个字段，URL即你的服务器地址，必须是一个公网地址，例如weixin.×××.com等；Token字段可以随意填入一串字符串，例如weixin，weixinfor×××等，这个算是一个私钥吧，后台必须要验证这个字段，以确定访问的合法性。</p>
+<h5 id="服务器验证">服务器验证</h5><p>即你部署在你的公网地址下的服务代码，咱们先不来复杂的，第一步先要把微信公众号和你的服务器建立连接吧，<a href="http://mp.weixin.qq.com/wiki/17/2d4265491f12608cd170a95559800f2d.html" target="_blank" rel="external">微信公众平台开发者文档</a>提供了一段php代码的实例：</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="function"><span class="keyword">function</span> <span class="title">checkSignature</span><span class="params">()</span></span><br><span class="line"></span>&#123;</span><br><span class="line">	<span class="variable">$signature</span> = <span class="variable">$_GET</span>[<span class="string">"signature"</span>];</span><br><span class="line">	<span class="variable">$timestamp</span> = <span class="variable">$_GET</span>[<span class="string">"timestamp"</span>];</span><br><span class="line">	<span class="variable">$nonce</span> = <span class="variable">$_GET</span>[<span class="string">"nonce"</span>];	  		</span><br><span class="line">	<span class="variable">$token</span> = TOKEN;</span><br><span class="line">	<span class="variable">$tmpArr</span> = <span class="keyword">array</span>(<span class="variable">$token</span>, <span class="variable">$timestamp</span>, <span class="variable">$nonce</span>);</span><br><span class="line">	sort(<span class="variable">$tmpArr</span>, SORT_STRING);</span><br><span class="line">	<span class="variable">$tmpStr</span> = implode( <span class="variable">$tmpArr</span> );</span><br><span class="line">	<span class="variable">$tmpStr</span> = sha1( <span class="variable">$tmpStr</span> );	</span><br><span class="line">	<span class="keyword">if</span>( <span class="variable">$tmpStr</span> == <span class="variable">$signature</span> )&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">	&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>开发者提交信息后，微信服务器将发送GET请求到填写的服务器地址URL上，GET请求携带四个参数，下面是参数说明：  </p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">参数</th>
+<th style="text-align:center">描述     </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">signature</td>
+<td style="text-align:center">微信加密签名，signature结合了开发者填写的token参数和请求中的timestamp参数、nonce参数。</td>
+</tr>
+<tr>
+<td style="text-align:center">timestamp</td>
+<td style="text-align:center">时间戳</td>
+</tr>
+<tr>
+<td style="text-align:center">nonce</td>
+<td style="text-align:center">随机数</td>
+</tr>
+<tr>
+<td style="text-align:center">echostr</td>
+<td style="text-align:center">随机字符串</td>
+</tr>
+</tbody>
+</table>
+]]></content>
+    <summary type="html">
+    <![CDATA[<h5 id="前言">前言</h5><blockquote>
+<p>话说微信公众平台的开发文档，看着完全找不着北好吧，完全不适合新手学习嘛，最起码弄个简单入门嘛！ —— 白岩松</p>
+</blockquote>
+<p>其实我也是个新手，写这篇也是边学边写，尽量为大家趟出一条快速入门的小道吧。当然，本篇不是教你怎样在微信公众号后台配置自动回复等简单功能的，而是完成更复杂的接口调用。</p>
+<h5 id="准备">准备</h5><p>为什么要用微信公众平台？现在谁都能看出来移动互联网是大趋势，而开发app的成本很高，而用微信公共号营销，不仅成本小，而且迭代快，当然就成了拽住移动互联网尾巴的第二选择。</p>
+<p>废话不多说了，微信公众号共分为三种</p>
+<blockquote>
+<p>订阅号</p>
+</blockquote>
+<p>订阅号被放在二级目录，要先点订阅号入口，才能看到订阅号列表，订阅号每天可以群发一条消息，一个月可以群发30条，总体来说订阅号偏向于媒体运营和信息传播。</p>
+<blockquote>
+<p>服务号</p>
+</blockquote>
+<p>服务号会像跟其他人的聊天信息一样放在会话列表中，服务号因为更偏重服务，所以对开发者支持也比较多，例如微信支付等订阅号不能支持的功能，但服务号不能天天发消息，一个月只能发4条，服务号侧重于对用户进行服务。</p>
+<blockquote>
+<p>企业号</p>
+</blockquote>
+<p>企业号顾名思义则是供企业内部使用，侧重于生产运营管理<br>]]>
+    
+    </summary>
+    
+      <category term="微信" scheme="http://luocong.net/tags/%E5%BE%AE%E4%BF%A1/"/>
+    
+      <category term="教程" scheme="http://luocong.net/tags/%E6%95%99%E7%A8%8B/"/>
+    
+      <category term="blog" scheme="http://luocong.net/categories/blog/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[MySQL Workbench连接MySQL失败]]></title>
+    <link href="http://luocong.net/blog/mysql/mysql-conn-fail/"/>
+    <id>http://luocong.net/blog/mysql/mysql-conn-fail/</id>
+    <published>2015-09-16T06:22:27.000Z</published>
+    <updated>2015-09-16T06:22:27.000Z</updated>
+    <content type="html"><![CDATA[<h5 id="前言">前言</h5><blockquote>
+<p>Failed to Connect to MySQL at 127.0.0.1:3306 with user root<br>Can’t connect to MySQL server on ‘127.0.0.1’ (61)</p>
+</blockquote>
+<p>今天在Mac上用<a href="http://dev.mysql.com/downloads/workbench/" target="_blank" rel="external">MySQL Workbench</a>连接mysql的时候一直报链接失败折腾几个小时，终于解决了，我觉的我是犯了经验主义的错误，现在把一些常见的可能原因列出来</p>
+<h5 id="MySQL未安装">MySQL未安装</h5><p>安装MySQL Workbench并不代表你安装了MySql,它只是一个管理MySql的客户端，点这里可以<a href="http://dev.mysql.com/downloads/mysql/" target="_blank" rel="external">安装MySql</a></p>
+<h5 id="MySQL未启动">MySQL未启动</h5><p>如果你确认安装了MySQL,那可能是MySQL没有启动，你可以执行下面的命令来确认MySQL运行状态</p>
+<h6 id="检查MySQL运行状态">检查MySQL运行状态</h6><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo /usr/<span class="built_in">local</span>/mysql/support-files/mysql.server status</span><br></pre></td></tr></table></figure>
+<a id="more"></a>  
+<p>其他相关命令：</p>
+<h6 id="启动MySQL">启动MySQL</h6><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo /usr/<span class="built_in">local</span>/mysql/support-files/mysql.server start</span><br></pre></td></tr></table></figure>
+<h6 id="重启MySQL">重启MySQL</h6><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo /usr/<span class="built_in">local</span>/mysql/support-files/mysql.server restart</span><br></pre></td></tr></table></figure>
+<h6 id="停止MySQL">停止MySQL</h6><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo /usr/<span class="built_in">local</span>/mysql/support-files/mysql.server stop</span><br></pre></td></tr></table></figure>
+<p><strong>注意:</strong> 以上操作如果需要输入密码，那个密码你登录系统时的密码，不是MySQL的密码，如果不做特别说明的话，则为MySQL的密码。</p>
+<h5 id="端口错误">端口错误</h5><p>经常使用MySQL的人根据经验都会认为它的默认端口是3306，但也有可能不一样哦，我的就是3307，这也是我一直连不上的原因，因为端口不对，所以如果连不上MySQL真的需要确认一下这个端口，在确认MySQL已安装并启动的情况下执行命令</p>
+<h6 id="第一步：在命令模式下登录MySQL">第一步：在命令模式下登录MySQL</h6><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">/usr/<span class="built_in">local</span>/mysql/bin/mysql -u root -p</span><br></pre></td></tr></table></figure>
+<p>需要输入密码</p>
+<h6 id="第二步：查看端口">第二步：查看端口</h6><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">SHOW GLOBAL VARIABLES LIKE <span class="string">'PORT'</span>;</span><br></pre></td></tr></table></figure>
+<p>得到端口值</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">| Variable_name | Value |</span><br><span class="line">+---------------+-------+</span><br><span class="line">| port          | <span class="number">3307</span>  |</span><br></pre></td></tr></table></figure>
+<p>填写正确的端口值就OK啦</p>
+<h5 id="密码不正确">密码不正确</h5><p>MySQL默认账户密码是root/root,如果修改了密码却忘记了的，可以使用下面的命令来修改密码：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">/usr/<span class="built_in">local</span>/mysql/bin/mysqladmin -u root password &lt;your-password&gt;</span><br></pre></td></tr></table></figure>
+<h5 id="总结">总结</h5><p>当然出现连接失败的原因会有很多很多，这里列举的只是一点点，如果以后有遇到连接不上MySQL的问题也会添加但这里，以供参考。</p>
+<h5 id="资料">资料</h5><p><a href="http://stackoverflow.com/questions/26344795/cannot-connect-to-mysql-workbench-on-mac-cant-connect-to-mysql-server-on-127" target="_blank" rel="external">Cannot connect to MySQL Workbench on mac</a></p>
+]]></content>
+    <summary type="html">
+    <![CDATA[<h5 id="前言">前言</h5><blockquote>
+<p>Failed to Connect to MySQL at 127.0.0.1:3306 with user root<br>Can’t connect to MySQL server on ‘127.0.0.1’ (61)</p>
+</blockquote>
+<p>今天在Mac上用<a href="http://dev.mysql.com/downloads/workbench/">MySQL Workbench</a>连接mysql的时候一直报链接失败折腾几个小时，终于解决了，我觉的我是犯了经验主义的错误，现在把一些常见的可能原因列出来</p>
+<h5 id="MySQL未安装">MySQL未安装</h5><p>安装MySQL Workbench并不代表你安装了MySql,它只是一个管理MySql的客户端，点这里可以<a href="http://dev.mysql.com/downloads/mysql/">安装MySql</a></p>
+<h5 id="MySQL未启动">MySQL未启动</h5><p>如果你确认安装了MySQL,那可能是MySQL没有启动，你可以执行下面的命令来确认MySQL运行状态</p>
+<h6 id="检查MySQL运行状态">检查MySQL运行状态</h6><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo /usr/<span class="built_in">local</span>/mysql/support-files/mysql.server status</span><br></pre></td></tr></table></figure>]]>
+    
+    </summary>
+    
+      <category term="MySQL" scheme="http://luocong.net/tags/MySQL/"/>
+    
+      <category term="MySQLWorkbench" scheme="http://luocong.net/tags/MySQLWorkbench/"/>
+    
+      <category term="MySQL客户端" scheme="http://luocong.net/tags/MySQL%E5%AE%A2%E6%88%B7%E7%AB%AF/"/>
+    
+      <category term="blog" scheme="http://luocong.net/categories/blog/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[Mac下Maven配置]]></title>
+    <link href="http://luocong.net/blog/maven/maven-install/"/>
+    <id>http://luocong.net/blog/maven/maven-install/</id>
+    <published>2015-09-14T01:51:53.000Z</published>
+    <updated>2015-09-14T01:51:53.000Z</updated>
+    <content type="html"><![CDATA[<h5 id="下载Maven">下载Maven</h5><p><a href="http://maven.apache.org/download.cgi" target="_blank" rel="external">下载最新版本Maven</a><br>下载后放置在一个目录，写这篇文章时最新版本为3.3.3，所以我把它放在了Documents/maven-3.3.3，当然这不是强制的，可自定义</p>
+<h5 id="设置环境变量">设置环境变量</h5><p>使用Maven需要设置环境变量，Mac系统本质是Linux，因此Linux设置环境变量的办法，通常也适用于Mac. 一般来讲，有3个地方可以设置环境变量:  </p>
+<blockquote>
+<p>/etc/profile  </p>
+</blockquote>
+<p>全局配置，不管是哪个用户，登录时都会读取该文件  </p>
+<blockquote>
+<p>~/.bashrc  </p>
+</blockquote>
+<p>全局配置，bash shell执行时，不管是何种方式，都会读取此文件，一般在这个文件中添加系统级环境变量</p>
+<blockquote>
+<p>~/.bash_profile  </p>
+</blockquote>
+<p>一般在这个文件中添加用户级环境变量, 所以最好是修改.bash_profile文件<br><a id="more"></a></p>
+<h6 id="打开终端，输入命令">打开终端，输入命令</h6><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">open ~/.bash_profile</span><br></pre></td></tr></table></figure>
+<p>如果习惯vim或者nano编辑也可以直接在终端打开</p>
+<h6 id="编辑">编辑</h6><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">export</span> M3_HOME=/Users/luocong/Documents/maven-<span class="number">3.3</span>.<span class="number">3</span></span><br><span class="line"><span class="built_in">export</span> PATH=<span class="variable">$PATH</span>:<span class="variable">$M3_HOME</span>/bin</span><br></pre></td></tr></table></figure>
+<p>注意把M3_HOME目录替换成你自己的  </p>
+<h6 id="立即生效">立即生效</h6><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">source</span> ~/.bash_profile</span><br></pre></td></tr></table></figure>
+<p>注意环境变量设置后并不会立即生效，需执行以上命令才能生效</p>
+<h6 id="验证">验证</h6><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mvn –version</span><br></pre></td></tr></table></figure>
+<p>出现类似于Apache Maven 3.3.3的信息即为成功</p>
+<h5 id="常见问题">常见问题</h5><p>执行mvn –version报错：</p>
+<blockquote>
+<p>Maven Installation OSX Error Unsupported major.minor version 51.0</p>
+</blockquote>
+<p>出现这个错误一般是java版本过低，不支持所安装的Maven版本，或者是java升级后，没有配置环境变量（升级并不会自动配置JAVE_HOME到最新版本）<br>解决方法：  </p>
+<ol>
+<li>升级java  </li>
+<li>配置JAVA_HOME如下   <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">export</span> JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.<span class="number">7.0</span>_76.jdk/Contents/Home</span><br><span class="line"><span class="built_in">export</span> M3_HOME=/Users/luocong/Documents/maven-<span class="number">3.3</span>.<span class="number">3</span></span><br><span class="line"><span class="built_in">export</span> PATH=<span class="variable">$PATH</span>:<span class="variable">$M3_HOME</span>/bin:<span class="variable">$JAVA_HOME</span>/bin</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>注意自行修改jdk版本</p>
+]]></content>
+    <summary type="html">
+    <![CDATA[<h5 id="下载Maven">下载Maven</h5><p><a href="http://maven.apache.org/download.cgi">下载最新版本Maven</a><br>下载后放置在一个目录，写这篇文章时最新版本为3.3.3，所以我把它放在了Documents/maven-3.3.3，当然这不是强制的，可自定义</p>
+<h5 id="设置环境变量">设置环境变量</h5><p>使用Maven需要设置环境变量，Mac系统本质是Linux，因此Linux设置环境变量的办法，通常也适用于Mac. 一般来讲，有3个地方可以设置环境变量:  </p>
+<blockquote>
+<p>/etc/profile  </p>
+</blockquote>
+<p>全局配置，不管是哪个用户，登录时都会读取该文件  </p>
+<blockquote>
+<p>~/.bashrc  </p>
+</blockquote>
+<p>全局配置，bash shell执行时，不管是何种方式，都会读取此文件，一般在这个文件中添加系统级环境变量</p>
+<blockquote>
+<p>~/.bash_profile  </p>
+</blockquote>
+<p>一般在这个文件中添加用户级环境变量, 所以最好是修改.bash_profile文件<br>]]>
+    
+    </summary>
+    
+      <category term="Maven" scheme="http://luocong.net/tags/Maven/"/>
+    
+      <category term="java" scheme="http://luocong.net/tags/java/"/>
+    
+      <category term="构建工具" scheme="http://luocong.net/tags/%E6%9E%84%E5%BB%BA%E5%B7%A5%E5%85%B7/"/>
+    
+      <category term="blog" scheme="http://luocong.net/categories/blog/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[vim常用命令]]></title>
+    <link href="http://luocong.net/blog/vim/vim-commands/"/>
+    <id>http://luocong.net/blog/vim/vim-commands/</id>
+    <published>2015-09-08T02:09:39.000Z</published>
+    <updated>2016-10-21T10:01:12.000Z</updated>
+    <content type="html"><![CDATA[<h5 id="前言">前言</h5><p>&emsp;&emsp;MAC终端terminal默认使用的是vim编辑器，经常需要上网寻找vim命令，这样就太浪费时间了，现在把一些vim常用命令纪录下。 </p>
+<h5 id="保存">保存</h5><p>按ESC键 跳到命令模式，然后：<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">:w  保存文件但不退出vi  </span><br><span class="line">:w file  将修改另外保存到file中，不退出vi  </span><br><span class="line">:w!  强制保存，不推出vi  </span><br><span class="line">:wq  保存文件并退出vi  </span><br><span class="line">:wq!  强制保存文件，并退出vi  </span><br><span class="line">q:  不保存文件，退出vi  </span><br><span class="line">:q!  不保存文件，强制退出vi  </span><br><span class="line">:e!  放弃所有修改，从上次保存文件开始再编辑</span><br></pre></td></tr></table></figure></p>
+<a id="more"></a>
+]]></content>
+    <summary type="html">
+    <![CDATA[<h5 id="前言">前言</h5><p>&emsp;&emsp;MAC终端terminal默认使用的是vim编辑器，经常需要上网寻找vim命令，这样就太浪费时间了，现在把一些vim常用命令纪录下。 </p>
+<h5 id="保存">保存</h5><p>按ESC键 跳到命令模式，然后：<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">:w  保存文件但不退出vi  </span><br><span class="line">:w file  将修改另外保存到file中，不退出vi  </span><br><span class="line">:w!  强制保存，不推出vi  </span><br><span class="line">:wq  保存文件并退出vi  </span><br><span class="line">:wq!  强制保存文件，并退出vi  </span><br><span class="line">q:  不保存文件，退出vi  </span><br><span class="line">:q!  不保存文件，强制退出vi  </span><br><span class="line">:e!  放弃所有修改，从上次保存文件开始再编辑</span><br></pre></td></tr></table></figure></p>]]>
+    
+    </summary>
+    
+      <category term="vim" scheme="http://luocong.net/tags/vim/"/>
+    
+      <category term="blog" scheme="http://luocong.net/categories/blog/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[git常用命令]]></title>
+    <link href="http://luocong.net/blog/git/git-commands/"/>
+    <id>http://luocong.net/blog/git/git-commands/</id>
+    <published>2015-09-06T02:09:39.000Z</published>
+    <updated>2016-10-21T10:01:12.000Z</updated>
+    <content type="html"><![CDATA[<h5 id="创建标签">创建标签</h5><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git tag <span class="operator">-a</span> v1.<span class="number">0.0</span> -m <span class="string">"version 1.0.0"</span></span><br></pre></td></tr></table></figure>
+<h5 id="删除标签">删除标签</h5><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git tag <span class="operator">-d</span> v1.<span class="number">0.0</span></span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+<h5 id="合并分支">合并分支</h5><p>如需把dev分支合并到master分支，则先要切换到master分支  </p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git checkout master</span><br><span class="line">get merge dev</span><br></pre></td></tr></table></figure>
+<p>默认是fast-forward方式，fast-forward方式就是当条件允许的时候，git直接把HEAD指针指向合并分支的头，完成合并。属于“快进方式”，不过这种情况如果删除分支，则会丢失分支信息。因为在这个过程中没有创建commit,如果不想快速合并，你可以：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">get merge dev --no-ff</span><br></pre></td></tr></table></figure>
+<p>no-ff：不使用fast-forward方式合并，保留分支的commit历史  </p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">get merge dev --squash</span><br></pre></td></tr></table></figure>
+<p>squash：使用squash方式合并，把多次分支commit历史压缩为一次，比如说，你的dev在开发的时候写的commit很乱，那么我们合并的时候不希望把这些历史commit带过来，于是使用–squash进行合并，此时文件已经同合并后一样了，但不移动HEAD，不提交。需要进行一次额外的commit来“总结”一下，然后完成最终的合并</p>
+<h5 id="恢复单个被误删的文件">恢复单个被误删的文件</h5><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git checkout --README.md</span><br></pre></td></tr></table></figure>
+<h5 id="恢复全部被误删的文件">恢复全部被误删的文件</h5><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git ls-files <span class="operator">-d</span> | xargs git checkout --</span><br></pre></td></tr></table></figure>]]></content>
+    <summary type="html">
+    <![CDATA[<h5 id="创建标签">创建标签</h5><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git tag <span class="operator">-a</span> v1.<span class="number">0.0</span> -m <span class="string">"version 1.0.0"</span></span><br></pre></td></tr></table></figure>
+<h5 id="删除标签">删除标签</h5><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git tag <span class="operator">-d</span> v1.<span class="number">0.0</span></span><br></pre></td></tr></table></figure>]]>
+    
+    </summary>
+    
+      <category term="git" scheme="http://luocong.net/tags/git/"/>
+    
+      <category term="blog" scheme="http://luocong.net/categories/blog/"/>
+    
+  </entry>
+  
+</feed>

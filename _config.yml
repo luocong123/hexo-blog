@@ -67,15 +67,11 @@ pagination_dir: page
 theme: next
 
 plugins:
-- hexo-generator-feed
 - hexo-generator-sitemap
-- hexo-generator-baidu-sitemap
 
 # hexo sitemap网站地图
 sitemap:
 path: sitemap.xml
-baidusitemap:
-path: baidusitemap.xml
 
 # Deployment
 ## Docs: http://hexo.io/docs/deployment.html

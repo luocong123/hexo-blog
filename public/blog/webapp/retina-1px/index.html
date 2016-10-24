@@ -1,0 +1,612 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="webapp retina 1px边框 实现" />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="MrLuo's Blog" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="基础知识设备像素（物理像素）显示器最小的物理显示单元。每个像素有自己的颜色、亮度。
+屏幕密度（PPI）每英寸有多少像素（PPI）。当一个显示屏像素密度超过300ppi时，人眼就无法区分出单独的像素。PPI高于210（笔记本电脑）、260（平板电脑）、300（手机）的屏幕都称为Retina屏幕。
+CSS像素（设备独立像素，dips）CSS像素主要使用在浏览器上，就是写CSS时使用的像素px，CSS像">
+<meta property="og:type" content="article">
+<meta property="og:title" content="webapp retina下1px边框实现">
+<meta property="og:url" content="http://luocong.net/blog/webapp/retina-1px/index.html">
+<meta property="og:site_name" content="MrLuo's Blog">
+<meta property="og:description" content="基础知识设备像素（物理像素）显示器最小的物理显示单元。每个像素有自己的颜色、亮度。
+屏幕密度（PPI）每英寸有多少像素（PPI）。当一个显示屏像素密度超过300ppi时，人眼就无法区分出单独的像素。PPI高于210（笔记本电脑）、260（平板电脑）、300（手机）的屏幕都称为Retina屏幕。
+CSS像素（设备独立像素，dips）CSS像素主要使用在浏览器上，就是写CSS时使用的像素px，CSS像">
+<meta property="og:updated_time" content="2015-12-16T02:55:18.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="webapp retina下1px边框实现">
+<meta name="twitter:description" content="基础知识设备像素（物理像素）显示器最小的物理显示单元。每个像素有自己的颜色、亮度。
+屏幕密度（PPI）每英寸有多少像素（PPI）。当一个显示屏像素密度超过300ppi时，人眼就无法区分出单独的像素。PPI高于210（笔记本电脑）、260（平板电脑）、300（手机）的屏幕都称为Retina屏幕。
+CSS像素（设备独立像素，dips）CSS像素主要使用在浏览器上，就是写CSS时使用的像素px，CSS像">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://luocong.net/blog/webapp/retina-1px/"/>
+
+
+  <title> webapp retina下1px边框实现 | MrLuo's Blog </title>
+</head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">MrLuo's Blog</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                webapp retina下1px边框实现
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2015-12-16T10:55:18+08:00" content="2015-12-16">
+              2015-12-16
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/blog/" itemprop="url" rel="index">
+                    <span itemprop="name">blog</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h5 id="基础知识">基础知识</h5><h6 id="设备像素（物理像素）">设备像素（物理像素）</h6><p>显示器最小的物理显示单元。每个像素有自己的颜色、亮度。</p>
+<h6 id="屏幕密度（PPI）">屏幕密度（PPI）</h6><p>每英寸有多少像素（PPI）。当一个显示屏像素密度超过300ppi时，人眼就无法区分出单独的像素。PPI高于210（笔记本电脑）、260（平板电脑）、300（手机）的屏幕都称为Retina屏幕。</p>
+<h6 id="CSS像素（设备独立像素，dips）">CSS像素（设备独立像素，dips）</h6><p>CSS像素主要使用在浏览器上，就是写CSS时使用的像素px，CSS像素在所有屏幕上是一样的，与设备无关。</p>
+<h6 id="设备像素比_window-devicePixelRatio(dpr)">设备像素比 window.devicePixelRatio(dpr)</h6><p>window.devicePixelRatio = 物理像素/设备独立像素（dips）<br>非视网膜的dpr=1，CSS 1px 对应一个物理像素，如：非视网膜屏幕的手机，dpr=320/320=1<br>视网膜的dpr=2，CSS 1px 对应四个物理像素，如：视网膜屏幕的手机，dpr=640/320=2。1个CSS像素对应2*2=4个物理像素  </p>
+<a id="more"></a>
+<p>retina下，物理像素要1px，那CSS像素就得是0.5px，不然看上去会粗。</p>
+<h5 id="解决方案">解决方案</h5><h6 id="设border-width为小数">设border-width为小数</h6><p>现在IOS8和IOS8以上版本，已经支持小数边框了，那么意味着，我们可以使用如下的css代码</p>
+<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="class">.hairlines</span> * <span class="rules">&#123; <span class="rule"><span class="attribute">border-width</span>:<span class="value"> .<span class="number">5px</span> <span class="important">!important</span></span></span>; &#125;</span></span><br></pre></td></tr></table></figure>
+<p>但这样子IOS8以下的版本，以及android浏览器都不支持，会把边框border-width:0,就没有边框啦。所以如果使用这个方案最好做一下优雅降级，即对不支持的版本还使用原来的边框。<br>js判断UA</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> (<span class="regexp">/iP(hone|od|ad)/</span>.test(navigator.userAgent)) &#123;</span><br><span class="line">  <span class="keyword">var</span> v = (navigator.appVersion).match(<span class="regexp">/OS (\d+)_(\d+)_?(\d+)?/</span>),</span><br><span class="line">    version = <span class="built_in">parseInt</span>(v[<span class="number">1</span>], <span class="number">10</span>);</span><br><span class="line">  <span class="keyword">if</span>(version &gt;= <span class="number">8</span>)&#123;</span><br><span class="line">    <span class="built_in">document</span>.documentElement.classList.add(<span class="string">'hairlines'</span>)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>或者js判断是否支持0.5px边框，是的话，则输出类名hairlines</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> (<span class="built_in">window</span>.devicePixelRatio &amp;&amp; devicePixelRatio &gt;= <span class="number">2</span>) &#123;</span><br><span class="line">  <span class="keyword">var</span> testElem = <span class="built_in">document</span>.createElement(<span class="string">'div'</span>);</span><br><span class="line">  testElem.style.border = <span class="string">'.5px solid transparent'</span>;</span><br><span class="line">  <span class="built_in">document</span>.body.appendChild(testElem);</span><br><span class="line">  <span class="keyword">if</span> (testElem.offsetHeight == <span class="number">1</span>)&#123;</span><br><span class="line">    <span class="built_in">document</span>.querySelector(<span class="string">'html'</span>).classList.add(<span class="string">'hairlines'</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="built_in">document</span>.body.removeChild(testElem);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h6 id="scale">scale</h6><p>可以用1px尺寸的带背景色元素然后scaleX(0.5)或scaleY(0.5)实现0.5px效果。</p>
+<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="comment">/*下边框1px*/</span></span><br><span class="line"><span class="class">.hairlines</span><span class="rules">&#123;    </span><br><span class="line">    <span class="rule"><span class="attribute">position</span>:<span class="value"> relative</span></span>; </span><br><span class="line">&#125;</span> </span><br><span class="line"><span class="class">.hairlines</span><span class="pseudo">:after</span><span class="rules">&#123;    </span><br><span class="line">    <span class="rule"><span class="attribute">content</span>:<span class="value"> <span class="string">''</span></span></span>;    </span><br><span class="line">    <span class="rule"><span class="attribute">position</span>:<span class="value"> absolute</span></span>;    </span><br><span class="line">    <span class="rule"><span class="attribute">bottom</span>:<span class="value"><span class="number">0</span></span></span>;    </span><br><span class="line">    <span class="rule"><span class="attribute">left</span>:<span class="value"><span class="number">0</span></span></span>;    </span><br><span class="line">    <span class="rule"><span class="attribute">right</span>:<span class="value"><span class="number">0</span></span></span>;    </span><br><span class="line">    <span class="rule"><span class="attribute">border-bottom</span>:<span class="value"><span class="number">1px</span> solid <span class="hexcolor">#dadada</span></span></span>;    </span><br><span class="line">    <span class="rule"><span class="attribute">-webkit-transform</span>:<span class="value"><span class="function">scaleY</span>(.<span class="number">5</span>)</span></span>; </span><br><span class="line">    <span class="rule"><span class="attribute">transform</span>:<span class="value"><span class="function">scaleY</span>(.<span class="number">5</span>)</span></span>;   </span><br><span class="line">    <span class="rule"><span class="attribute">-webkit-transform-origin</span>:<span class="value"><span class="number">0</span> <span class="number">0</span></span></span>;</span><br><span class="line">    <span class="rule"><span class="attribute">transform-origin</span>:<span class="value"><span class="number">0</span> <span class="number">0</span></span></span>;  </span><br><span class="line">&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/*四边框实现*/</span></span><br><span class="line"><span class="class">.hairlines</span><span class="rules">&#123;    </span><br><span class="line">    <span class="rule"><span class="attribute">position</span>:<span class="value"> relative</span></span>; </span><br><span class="line">    <span class="rule"><span class="attribute">border-radius</span>:<span class="value"> <span class="number">8px</span></span></span>;</span><br><span class="line">    <span class="rule"><span class="attribute">border</span>:<span class="value"> none</span></span>;</span><br><span class="line">&#125;</span> </span><br><span class="line"><span class="class">.hairlines</span><span class="pseudo">:after</span><span class="rules">&#123;</span><br><span class="line">    <span class="rule"><span class="attribute">content</span>:<span class="value"> <span class="string">''</span></span></span>;</span><br><span class="line">    <span class="rule"><span class="attribute">position</span>:<span class="value"> absolute</span></span>;</span><br><span class="line">    <span class="rule"><span class="attribute">top</span>:<span class="value"> <span class="number">0</span></span></span>;</span><br><span class="line">    <span class="rule"><span class="attribute">left</span>:<span class="value"> <span class="number">0</span></span></span>;    </span><br><span class="line">    <span class="rule"><span class="attribute">width</span>:<span class="value"> <span class="number">200%</span></span></span>;</span><br><span class="line">    <span class="rule"><span class="attribute">height</span>:<span class="value"> <span class="number">200%</span></span></span>;</span><br><span class="line">    <span class="rule"><span class="attribute">border</span>:<span class="value"> <span class="number">1px</span> solid <span class="hexcolor">#dadada</span></span></span>;</span><br><span class="line">    <span class="rule"><span class="attribute">border-radius</span>:<span class="value"> <span class="number">8px</span></span></span>;</span><br><span class="line">    <span class="rule"><span class="attribute">-webkit-box-sizing</span>:<span class="value"> border-box</span></span>;</span><br><span class="line">    <span class="rule"><span class="attribute">box-sizing</span>:<span class="value"> border-box</span></span>;   </span><br><span class="line">    <span class="rule"><span class="attribute">-webkit-transform</span>:<span class="value"> <span class="function">scale</span>(.<span class="number">5</span>)</span></span>;</span><br><span class="line">    <span class="rule"><span class="attribute">transform</span>:<span class="value"> <span class="function">scale</span>(.<span class="number">5</span>)</span></span>;</span><br><span class="line">    <span class="rule"><span class="attribute">-webkit-transform-origin</span>:<span class="value"> left top</span></span>;</span><br><span class="line">    <span class="rule"><span class="attribute">transform-origin</span>:<span class="value"> left top</span></span>;</span><br><span class="line">&#125;</span></span><br></pre></td></tr></table></figure>
+<p>这种方案目前来说是一个不错的解决方案,操作方便，而且对圆角有一定的支持，兼容性也算可以。<br>如果加一个判断是否Retina屏，来确定是否使用这种方式创建边框那当然是最好啦</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(<span class="built_in">window</span>.devicePixelRatio &amp;&amp; devicePixelRatio &gt;= <span class="number">2</span>)&#123;</span><br><span class="line">  <span class="built_in">document</span>.querySelector(<span class="string">'html'</span>).classList.add(<span class="string">'hairlines'</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/1px边框/" rel="tag">#1px边框</a>
+          
+            <a href="/tags/retina/" rel="tag">#retina</a>
+          
+            <a href="/tags/webapp/" rel="tag">#webapp</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/blog/hack/weixin-browser-hack/" rel="next" title="微信浏览器hack记录">
+                <i class="fa fa-chevron-left"></i> 微信浏览器hack记录
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="Luo" />
+          <p class="site-author-name" itemprop="name">Luo</p>
+          <p class="site-description motion-element" itemprop="description">这里是属于罗聪的个人技术博客，在这里，有关于web前端，后端的许多技术文章，有探寻到的一些有意思的，好玩的东西，或者还有个人成长经历哦！由衷希望结识一些志同道合的同学，来共同进步，技术改变未来！</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">10</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              
+                <span class="site-state-item-count">1</span>
+                <span class="site-state-item-name">分类</span>
+              
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">24</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-5"><a class="nav-link" href="#基础知识"><span class="nav-number">1.</span> <span class="nav-text">基础知识</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#设备像素（物理像素）"><span class="nav-number">1.1.</span> <span class="nav-text">设备像素（物理像素）</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#屏幕密度（PPI）"><span class="nav-number">1.2.</span> <span class="nav-text">屏幕密度（PPI）</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#CSS像素（设备独立像素，dips）"><span class="nav-number">1.3.</span> <span class="nav-text">CSS像素（设备独立像素，dips）</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#设备像素比_window-devicePixelRatio(dpr)"><span class="nav-number">1.4.</span> <span class="nav-text">设备像素比 window.devicePixelRatio(dpr)</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#解决方案"><span class="nav-number">2.</span> <span class="nav-text">解决方案</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#设border-width为小数"><span class="nav-number">2.1.</span> <span class="nav-text">设border-width为小数</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#scale"><span class="nav-number">2.2.</span> <span class="nav-text">scale</span></a></li></ol></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Luo</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>

@@ -1,0 +1,643 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Maven,java,构建工具,Maven安装教程,Maven配置" />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="MrLuo's Blog" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="下载Maven下载最新版本Maven下载后放置在一个目录，写这篇文章时最新版本为3.3.3，所以我把它放在了Documents/maven-3.3.3，当然这不是强制的，可自定义
+设置环境变量使用Maven需要设置环境变量，Mac系统本质是Linux，因此Linux设置环境变量的办法，通常也适用于Mac. 一般来讲，有3个地方可以设置环境变量:  
+
+/etc/profile  
+
+全局配置，不管">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Mac下Maven配置">
+<meta property="og:url" content="http://luocong.net/blog/maven/maven-install/index.html">
+<meta property="og:site_name" content="MrLuo's Blog">
+<meta property="og:description" content="下载Maven下载最新版本Maven下载后放置在一个目录，写这篇文章时最新版本为3.3.3，所以我把它放在了Documents/maven-3.3.3，当然这不是强制的，可自定义
+设置环境变量使用Maven需要设置环境变量，Mac系统本质是Linux，因此Linux设置环境变量的办法，通常也适用于Mac. 一般来讲，有3个地方可以设置环境变量:  
+
+/etc/profile  
+
+全局配置，不管">
+<meta property="og:updated_time" content="2015-09-14T01:51:53.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Mac下Maven配置">
+<meta name="twitter:description" content="下载Maven下载最新版本Maven下载后放置在一个目录，写这篇文章时最新版本为3.3.3，所以我把它放在了Documents/maven-3.3.3，当然这不是强制的，可自定义
+设置环境变量使用Maven需要设置环境变量，Mac系统本质是Linux，因此Linux设置环境变量的办法，通常也适用于Mac. 一般来讲，有3个地方可以设置环境变量:  
+
+/etc/profile  
+
+全局配置，不管">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://luocong.net/blog/maven/maven-install/"/>
+
+
+  <title> Mac下Maven配置 | MrLuo's Blog </title>
+</head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">MrLuo's Blog</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Mac下Maven配置
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2015-09-14T09:51:53+08:00" content="2015-09-14">
+              2015-09-14
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/blog/" itemprop="url" rel="index">
+                    <span itemprop="name">blog</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h5 id="下载Maven">下载Maven</h5><p><a href="http://maven.apache.org/download.cgi" target="_blank" rel="external">下载最新版本Maven</a><br>下载后放置在一个目录，写这篇文章时最新版本为3.3.3，所以我把它放在了Documents/maven-3.3.3，当然这不是强制的，可自定义</p>
+<h5 id="设置环境变量">设置环境变量</h5><p>使用Maven需要设置环境变量，Mac系统本质是Linux，因此Linux设置环境变量的办法，通常也适用于Mac. 一般来讲，有3个地方可以设置环境变量:  </p>
+<blockquote>
+<p>/etc/profile  </p>
+</blockquote>
+<p>全局配置，不管是哪个用户，登录时都会读取该文件  </p>
+<blockquote>
+<p>~/.bashrc  </p>
+</blockquote>
+<p>全局配置，bash shell执行时，不管是何种方式，都会读取此文件，一般在这个文件中添加系统级环境变量</p>
+<blockquote>
+<p>~/.bash_profile  </p>
+</blockquote>
+<p>一般在这个文件中添加用户级环境变量, 所以最好是修改.bash_profile文件<br><a id="more"></a></p>
+<h6 id="打开终端，输入命令">打开终端，输入命令</h6><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">open ~/.bash_profile</span><br></pre></td></tr></table></figure>
+<p>如果习惯vim或者nano编辑也可以直接在终端打开</p>
+<h6 id="编辑">编辑</h6><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">export</span> M3_HOME=/Users/luocong/Documents/maven-<span class="number">3.3</span>.<span class="number">3</span></span><br><span class="line"><span class="built_in">export</span> PATH=<span class="variable">$PATH</span>:<span class="variable">$M3_HOME</span>/bin</span><br></pre></td></tr></table></figure>
+<p>注意把M3_HOME目录替换成你自己的  </p>
+<h6 id="立即生效">立即生效</h6><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">source</span> ~/.bash_profile</span><br></pre></td></tr></table></figure>
+<p>注意环境变量设置后并不会立即生效，需执行以上命令才能生效</p>
+<h6 id="验证">验证</h6><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mvn –version</span><br></pre></td></tr></table></figure>
+<p>出现类似于Apache Maven 3.3.3的信息即为成功</p>
+<h5 id="常见问题">常见问题</h5><p>执行mvn –version报错：</p>
+<blockquote>
+<p>Maven Installation OSX Error Unsupported major.minor version 51.0</p>
+</blockquote>
+<p>出现这个错误一般是java版本过低，不支持所安装的Maven版本，或者是java升级后，没有配置环境变量（升级并不会自动配置JAVE_HOME到最新版本）<br>解决方法：  </p>
+<ol>
+<li>升级java  </li>
+<li>配置JAVA_HOME如下   <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">export</span> JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.<span class="number">7.0</span>_76.jdk/Contents/Home</span><br><span class="line"><span class="built_in">export</span> M3_HOME=/Users/luocong/Documents/maven-<span class="number">3.3</span>.<span class="number">3</span></span><br><span class="line"><span class="built_in">export</span> PATH=<span class="variable">$PATH</span>:<span class="variable">$M3_HOME</span>/bin:<span class="variable">$JAVA_HOME</span>/bin</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>注意自行修改jdk版本</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Maven/" rel="tag">#Maven</a>
+          
+            <a href="/tags/java/" rel="tag">#java</a>
+          
+            <a href="/tags/构建工具/" rel="tag">#构建工具</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/blog/vim/vim-commands/" rel="next" title="vim常用命令">
+                <i class="fa fa-chevron-left"></i> vim常用命令
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/blog/mysql/mysql-conn-fail/" rel="prev" title="MySQL Workbench连接MySQL失败">
+                MySQL Workbench连接MySQL失败 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="Luo" />
+          <p class="site-author-name" itemprop="name">Luo</p>
+          <p class="site-description motion-element" itemprop="description">这里是属于罗聪的个人技术博客，在这里，有关于web前端，后端的许多技术文章，有探寻到的一些有意思的，好玩的东西，或者还有个人成长经历哦！由衷希望结识一些志同道合的同学，来共同进步，技术改变未来！</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">10</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              
+                <span class="site-state-item-count">1</span>
+                <span class="site-state-item-name">分类</span>
+              
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">24</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-5"><a class="nav-link" href="#下载Maven"><span class="nav-number">1.</span> <span class="nav-text">下载Maven</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#设置环境变量"><span class="nav-number">2.</span> <span class="nav-text">设置环境变量</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#打开终端，输入命令"><span class="nav-number">2.1.</span> <span class="nav-text">打开终端，输入命令</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#编辑"><span class="nav-number">2.2.</span> <span class="nav-text">编辑</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#立即生效"><span class="nav-number">2.3.</span> <span class="nav-text">立即生效</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#验证"><span class="nav-number">2.4.</span> <span class="nav-text">验证</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#常见问题"><span class="nav-number">3.</span> <span class="nav-text">常见问题</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Luo</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>
